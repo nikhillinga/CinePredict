@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CinePredict — Film Analytics Intelligence</title>
+  <meta name="description" content="Professional pre-release film performance prediction powered by machine learning. Verdict, revenue, and audience rating forecasting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo-block">
+      <span class="logo-mark">▶</span>
+      <span class="logo-text">CINEPREDICT</span>
+      <span class="logo-sub">INTELLIGENCE SYSTEM v2.1</span>
+    </div>
+    <div class="header-meta">
+      <span class="status-dot"></span>
+      <span class="status-text">MODELS LOADED</span>
+      <span class="header-divider">|</span>
+      <span class="header-info">TMDB CONNECTED</span>
+    </div>
+  </header>
+
+  <main class="app-layout">
+
+    <!-- LEFT: Input Panel -->
+    <section class="input-panel">
+      <div class="panel-label">INPUT PARAMETERS</div>
+
+      <!-- Production Section -->
+      <div class="form-section">
+        <h2 class="section-heading">01 — PRODUCTION</h2>
+        <div class="field-row">
+          <div class="field full">
+            <label class="field-label">PRODUCTION BUDGET <span class="field-unit">USD</span></label>
+            <div class="input-wrapper currency">
+              <span class="currency-symbol">$</span>
+              <input id="budget" type="text" class="field-input" placeholder="150,000,000" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+        <div class="field-row two-col">
+          <div class="field">
+            <label class="field-label">RELEASE YEAR</label>
+            <input id="release_year" type="number" class="field-input" placeholder="2025" min="1970" max="2030" />
+          </div>
+          <div class="field">
+            <label class="field-label">RELEASE MONTH</label>
+            <select id="release_month" class="field-input field-select">
+              <option value="1">JANUARY</option>
+              <option value="2">FEBRUARY</option>
+              <option value="3">MARCH</option>
+              <option value="4">APRIL</option>
+              <option value="5">MAY</option>
+              <option value="6">JUNE</option>
+              <option value="7" selected>JULY</option>
+              <option value="8">AUGUST</option>
+              <option value="9">SEPTEMBER</option>
+              <option value="10">OCTOBER</option>
+              <option value="11">NOVEMBER</option>
+              <option value="12">DECEMBER</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Talent Section -->
+      <div class="form-section">
+        <h2 class="section-heading">02 — TALENT</h2>
+
+        <div class="field">
+          <label class="field-label">DIRECTOR</label>
+          <div class="talent-lookup-row">
+            <div class="talent-card" id="director-card">
+              <input id="director_name" type="text" class="field-input talent-input" placeholder="e.g. Christopher Nolan" autocomplete="off" />
+              <button class="lookup-btn" onclick="lookupPerson('director')">
+                <span class="lookup-btn-text">FETCH</span>
+                <span class="lookup-spinner hidden" id="director-spinner">◌</span>
+              </button>
+            </div>
+            <div class="talent-result hidden" id="director-result">
+              <div class="talent-avatar" id="director-avatar"></div>
+              <div class="talent-info">
+                <span class="talent-found-name" id="director-found-name"></span>
+                <span class="talent-rating" id="director-rating-display"></span>
+              </div>
+            </div>
+          </div>
+          <input id="director_rating" type="hidden" value="6.0" />
+        </div>
+
+        <div class="field" style="margin-top:20px">
+          <label class="field-label">LEAD ACTOR</label>
+          <div class="talent-lookup-row">
+            <div class="talent-card" id="lead-card">
+              <input id="lead_name" type="text" class="field-input talent-input" placeholder="e.g. Leonardo DiCaprio" autocomplete="off" />
+              <button class="lookup-btn" onclick="lookupPerson('lead')">
+                <span class="lookup-btn-text">FETCH</span>
+                <span class="lookup-spinner hidden" id="lead-spinner">◌</span>
+              </button>
+            </div>
+            <div class="talent-result hidden" id="lead-result">
+              <div class="talent-avatar" id="lead-avatar"></div>
+              <div class="talent-info">
+                <span class="talent-found-name" id="lead-found-name"></span>
+                <span class="talent-rating" id="lead-rating-display"></span>
+              </div>
+            </div>
+          </div>
+          <input id="lead_rating" type="hidden" value="6.0" />
+        </div>
+
+        <div class="field" style="margin-top:20px">
+          <label class="field-label">SUPPORTING CAST <span class="field-unit">UP TO 2</span></label>
+          <div class="talent-lookup-row">
+            <div class="talent-card">
+              <input id="support1_name" type="text" class="field-input talent-input" placeholder="Supporting actor 1" autocomplete="off" />
+              <button class="lookup-btn" onclick="lookupPerson('support1')">
+                <span class="lookup-btn-text">FETCH</span>
+                <span class="lookup-spinner hidden" id="support1-spinner">◌</span>
+              </button>
+            </div>
+            <div class="talent-result hidden" id="support1-result">
+              <div class="talent-avatar" id="support1-avatar"></div>
+              <div class="talent-info">
+                <span class="talent-found-name" id="support1-found-name"></span>
+                <span class="talent-rating" id="support1-rating-display"></span>
+              </div>
+            </div>
+          </div>
+          <div class="talent-lookup-row" style="margin-top:10px">
+            <div class="talent-card">
+              <input id="support2_name" type="text" class="field-input talent-input" placeholder="Supporting actor 2" autocomplete="off" />
+              <button class="lookup-btn" onclick="lookupPerson('support2')">
+                <span class="lookup-btn-text">FETCH</span>
+                <span class="lookup-spinner hidden" id="support2-spinner">◌</span>
+              </button>
+            </div>
+            <div class="talent-result hidden" id="support2-result">
+              <div class="talent-avatar" id="support2-avatar"></div>
+              <div class="talent-info">
+                <span class="talent-found-name" id="support2-found-name"></span>
+                <span class="talent-rating" id="support2-rating-display"></span>
+              </div>
+            </div>
+          </div>
+          <input id="support1_rating" type="hidden" value="6.0" />
+          <input id="support2_rating" type="hidden" value="6.0" />
+        </div>
+      </div>
+
+      <!-- Genre Section -->
+      <div class="form-section">
+        <h2 class="section-heading">03 — GENRE PROFILE</h2>
+
+        <div class="field">
+          <label class="field-label">PRIMARY GENRE</label>
+          <select id="primary_genre" class="field-input field-select">
+            <option value="Action">ACTION</option>
+            <option value="Adventure">ADVENTURE</option>
+            <option value="Animation">ANIMATION</option>
+            <option value="Comedy">COMEDY</option>
+            <option value="Crime">CRIME</option>
+            <option value="Drama">DRAMA</option>
+            <option value="Fantasy">FANTASY</option>
+            <option value="History">HISTORY</option>
+            <option value="Horror">HORROR</option>
+            <option value="Mystery">MYSTERY</option>
+            <option value="Romance">ROMANCE</option>
+            <option value="Science Fiction">SCIENCE FICTION</option>
+            <option value="Thriller">THRILLER</option>
+            <option value="War">WAR</option>
+            <option value="Western">WESTERN</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+          <label class="field-label">GENRE FLAGS <span class="field-unit">SELECT ALL THAT APPLY</span></label>
+          <div class="genre-grid">
+            <label class="genre-chip"><input type="checkbox" id="is_action" value="1" /><span>ACTION</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_comedy" value="1" /><span>COMEDY</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_drama" value="1" /><span>DRAMA</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_horror" value="1" /><span>HORROR</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_sciencefiction" value="1" /><span>SCI-FI</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_animation" value="1" /><span>ANIMATION</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_romance" value="1" /><span>ROMANCE</span></label>
+            <label class="genre-chip"><input type="checkbox" id="is_thriller" value="1" /><span>THRILLER</span></label>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+          <label class="field-label">NUMBER OF GENRES</label>
+          <input id="num_genres" type="number" class="field-input" min="1" max="8" value="2" />
+        </div>
+      </div>
+
+      <!-- Market Section -->
+      <div class="form-section">
+        <h2 class="section-heading">04 — MARKET CONDITIONS</h2>
+        <div class="field">
+          <label class="field-label">GENRE MOMENTUM</label>
+          <div class="trend-selector">
+            <button class="trend-btn" data-value="1" id="trend-1">
+              <span class="trend-icon">▼</span>
+              <span class="trend-label">COLD</span>
+              <span class="trend-sub">Audience fatigue</span>
+            </button>
+            <button class="trend-btn active" data-value="2" id="trend-2">
+              <span class="trend-icon">—</span>
+              <span class="trend-label">NEUTRAL</span>
+              <span class="trend-sub">Standard market</span>
+            </button>
+            <button class="trend-btn" data-value="3" id="trend-3">
+              <span class="trend-icon">▲</span>
+              <span class="trend-label">HOT</span>
+              <span class="trend-sub">Cultural peak</span>
+            </button>
+          </div>
+          <input id="genre_trend" type="hidden" value="2" />
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="predict-btn" id="predict-btn" onclick="runPrediction()">
+        <span class="predict-btn-text">RUN ANALYSIS</span>
+        <span class="predict-arrow">→</span>
+      </button>
+      <div class="predict-error hidden" id="predict-error"></div>
+    </section>
+
+    <!-- RIGHT: Results Panel -->
+    <section class="results-panel" id="results-panel">
+
+      <!-- Idle State -->
+      <div class="idle-state" id="idle-state">
+        <div class="idle-grid">
+          <div class="idle-line"></div>
+          <div class="idle-line"></div>
+          <div class="idle-line"></div>
+        </div>
+        <div class="idle-text">
+          <span class="idle-label">AWAITING INPUT</span>
+          <p class="idle-desc">Configure production parameters on the left to generate a forecast.</p>
+        </div>
+        <div class="idle-ticker">
+          <div class="ticker-track">
+            <span>BOX OFFICE INTELLIGENCE</span>
+            <span class="ticker-dot">·</span>
+            <span>PRE-RELEASE ANALYTICS</span>
+            <span class="ticker-dot">·</span>
+            <span>AUDIENCE SCORING</span>
+            <span class="ticker-dot">·</span>
+            <span>REVENUE FORECASTING</span>
+            <span class="ticker-dot">·</span>
+            <span>VERDICT CLASSIFICATION</span>
+            <span class="ticker-dot">·</span>
+            <span>BOX OFFICE INTELLIGENCE</span>
+            <span class="ticker-dot">·</span>
+            <span>PRE-RELEASE ANALYTICS</span>
+            <span class="ticker-dot">·</span>
+            <span>AUDIENCE SCORING</span>
+            <span class="ticker-dot">·</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state hidden" id="loading-state">
+        <div class="loading-reel">
+          <div class="reel-frame"></div>
+          <div class="reel-frame"></div>
+          <div class="reel-frame"></div>
+          <div class="reel-frame"></div>
+          <div class="reel-frame"></div>
+        </div>
+        <div class="loading-text">PROCESSING<span class="loading-dots">...</span></div>
+        <div class="loading-sub">Running XGBoost inference on 18 features</div>
+      </div>
+
+      <!-- Results State -->
+      <div class="results-content hidden" id="results-content">
+
+        <!-- Verdict Hero -->
+        <div class="verdict-hero" id="verdict-hero">
+          <div class="verdict-label">FORECAST VERDICT</div>
+          <div class="verdict-value" id="verdict-value">—</div>
+          <div class="verdict-confidence">
+            <span class="confidence-label">CONFIDENCE</span>
+            <div class="confidence-bar-outer">
+              <div class="confidence-bar-inner" id="confidence-bar"></div>
+            </div>
+            <span class="confidence-pct" id="confidence-pct">—</span>
+          </div>
+        </div>
+
+        <!-- Probability Breakdown -->
+        <div class="prob-breakdown" id="prob-breakdown">
+          <div class="prob-label-header">PROBABILITY DISTRIBUTION</div>
+          <div class="prob-bars" id="prob-bars"></div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-row">
+          <div class="metric-card" id="revenue-card">
+            <div class="metric-label">BOX OFFICE PROJECTION</div>
+            <div class="metric-value" id="revenue-value">—</div>
+            <div class="metric-sub" id="revenue-roi">—</div>
+            <div class="metric-arc-wrapper">
+              <svg class="metric-arc" viewBox="0 0 100 55">
+                <path class="arc-track" d="M 10 50 A 40 40 0 0 1 90 50" />
+                <path class="arc-fill" id="revenue-arc" d="M 10 50 A 40 40 0 0 1 90 50" stroke-dasharray="0 125" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="metric-card" id="rating-card">
+            <div class="metric-label">PROJECTED IMDB RATING</div>
+            <div class="metric-value" id="rating-value">—</div>
+            <div class="metric-sub">AUDIENCE SCORE / 10</div>
+            <div class="rating-stars" id="rating-stars"></div>
+          </div>
+        </div>
+
+        <!-- Data footer -->
+        <div class="results-footer">
+          <div class="footer-tag">Powered by XGBoost · TMDB Data</div>
+          <button class="reset-btn" onclick="resetResults()">↺ NEW ANALYSIS</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
